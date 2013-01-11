@@ -46,11 +46,16 @@ do
   CLASSPATH=$CLASSPATH:$file
 done
 
+for file in $base_dir/core/lib_managed/scala_2.8.0/compile/*.jar;
+do
+	CLASSPATH=$CLASSPATH:$file
+done
+
 CLASSPATH=$CLASSPATH:$base_dir/project/boot/scala-2.8.0/lib/scala-library.jar
 
 echo $CLASSPATH
 
-CLASSPATH=dist:$CLASSPATH:${HADOOP_HOME}/conf
+CLASSPATH=dist:$CLASSPATH:`hadoop classpath`
 
 #if [ -z "$KAFKA_OPTS" ]; then
 #  KAFKA_OPTS="-Xmx512M -server -Dcom.sun.management.jmxremote"
