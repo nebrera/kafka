@@ -53,7 +53,7 @@ done
 
 CLASSPATH=$CLASSPATH:$base_dir/project/boot/scala-2.8.0/lib/scala-library.jar
 
-echo $CLASSPATH
+#echo $CLASSPATH
 
 CLASSPATH=dist:$CLASSPATH:`hadoop classpath`
 
