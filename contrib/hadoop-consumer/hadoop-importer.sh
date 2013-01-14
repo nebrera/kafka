@@ -1,8 +1,12 @@
 #!/bin/bash
 
+#script uses relative paths, fixing it the old fashion way ;)
+cd `dirname $0`
+
 topic="madvertise"
 hdfs_dir="/kafka"
 bucket_name=`date +%Y/%m/%d/%Hh%M/`
+
 generated_property_file='current.properties'
 current_offset_file_exists=`hadoop fs -ls ${hdfs_dir}/offset`
 

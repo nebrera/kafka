@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#script uses relative paths, fixing it the old fashion way ;)
+cd `dirname $0`
+
 topic="madvertise"
 hdfs_dir="/kafka"
 list_of_brokers="servers.conf"
