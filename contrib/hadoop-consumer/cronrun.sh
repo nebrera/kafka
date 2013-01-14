@@ -1,3 +1,4 @@
+#!/bin/bash
 PROGRAM=`dirname $0`/hadoop-importer.sh
 LOG_FACILITY="local1"
 
