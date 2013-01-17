@@ -4,7 +4,7 @@
 cd `dirname $0`
 
 topic="madvertise"
-hdfs_dir="/kafka"
+hdfs_dir="/events"
 list_of_brokers="servers.conf"
 bucket_name=`date +%Y/%m/%d/%Hh%M/`
 generated_property_file='current.properties'
