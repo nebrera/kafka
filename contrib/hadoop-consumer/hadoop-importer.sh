@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Run in UTC
+TZ="/usr/share/zoneinfo/UTC"
+
 #script uses relative paths, fixing it the old fashion way ;)
 cd `dirname $0`
 
