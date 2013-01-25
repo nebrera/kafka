@@ -37,8 +37,6 @@ import org.apache.hadoop.mapred.Reporter;
 public class SimpleKafkaETLMapper implements
 Mapper<KafkaETLKey, BytesWritable, LongWritable, Text> {
 
-    protected long _count = 0;
-    
 	protected Text getData(Message message) throws IOException {
 		ByteBuffer buf = message.payload();
 		
@@ -65,9 +63,8 @@ Mapper<KafkaETLKey, BytesWritable, LongWritable, Text> {
             throw new IOException ("Invalid message checksum " 
                                             + message.checksum() + ". Expected " + key + ".");
         Text data = getData (message);
-        _count ++;
-           
-        collector.collect(new LongWritable (_count), data);
+
+        collector.collect(null, data);
 
     }
 
