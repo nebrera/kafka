@@ -6,11 +6,38 @@ export TZ="/usr/share/zoneinfo/UTC"
 #script uses relative paths, fixing it the old fashion way ;)
 cd `dirname $0`
 
-topic="madvertise"
-hdfs_dir="/events"
-list_of_brokers="servers.conf"
-bucket_name=`date +%Y/%m/%d/%Hh%M/`
-generated_property_file='current.properties'
+if [ -z "$topic" ]; then
+   echo "***************************************************************************************************************************"
+   echo "Must set $topic to kafka topic"
+   echo "***************************************************************************************************************************"
+   exit 1
+fi
+
+if [ -z "$hdfs_dir" ]; then
+   echo "***************************************************************************************************************************"
+   echo "Must set $hdfs_dir to HDFS path"
+   echo "***************************************************************************************************************************"
+   exit 1
+fi
+
+if [ -z "$list_of_brokers" ]; then
+   echo "***************************************************************************************************************************"
+   echo "Must set $list_of_brokers to a config file containing list of kafka servers"
+   echo "***************************************************************************************************************************"
+   exit 1
+fi
+
+if [ -z "$generated_property_file" ]; then
+   echo "***************************************************************************************************************************"
+   echo "Must set $generated_property_file to filename we can use for storing state"
+   echo "***************************************************************************************************************************"
+   exit 1
+fi
+
+if [ -z "$bucket_name" ]; then
+   bucket_name=`date +%Y/%m/%d/%Hh%M/`
+fi
+
 current_offset_file_exists=`hadoop fs -ls ${hdfs_dir}/offset`
 
 if [ -z "$current_offset_file_exists" ]; then
