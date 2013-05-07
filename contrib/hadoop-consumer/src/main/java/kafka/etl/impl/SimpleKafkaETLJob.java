@@ -41,64 +41,68 @@ public class SimpleKafkaETLJob {
     protected String _input;
     protected String _output;
     protected String _topic;
-    
-	public SimpleKafkaETLJob(String name, Props props) throws Exception {
-		_name = name;
-		_props = props;
-		
-		_input = _props.getProperty("input");
-		_output = _props.getProperty("output");
-		
-		_topic = props.getProperty("kafka.etl.topic");
-	}
+
+  public SimpleKafkaETLJob(String name, Props props) throws Exception {
+    _name = name;
+    _props = props;
+
+    _input = _props.getProperty("input");
+    _output = _props.getProperty("output");
+
+    _topic = props.getProperty("kafka.etl.topic");
+  }
 
 
-	protected JobConf createJobConf() throws Exception {
-		JobConf jobConf = KafkaETLJob.createJobConf("SimpleKafakETL", _topic, _props, getClass());
-		
-		jobConf.setMapperClass(SimpleKafkaETLMapper.class);
-		KafkaETLInputFormat.setInputPaths(jobConf, new Path(_input));
-		
-		jobConf.setOutputKeyClass(LongWritable.class);
-		jobConf.setOutputValueClass(Text.class);
-		jobConf.setOutputFormat(TextOutputFormat.class);
-		TextOutputFormat.setCompressOutput(jobConf, false);
-		Path output = new Path(_output);
-		FileSystem fs = output.getFileSystem(jobConf);
-		if (fs.exists(output)) fs.delete(output);
-		TextOutputFormat.setOutputPath(jobConf, output);
-		
-		jobConf.setNumReduceTasks(0);
-		return jobConf;
-	}
-	
+  protected JobConf createJobConf() throws Exception {
+    JobConf jobConf = KafkaETLJob.createJobConf("SimpleKafakETL", _topic, _props, getClass());
+
+    jobConf.setMapperClass(SimpleKafkaETLMapper.class);
+    KafkaETLInputFormat.setInputPaths(jobConf, new Path(_input));
+
+    jobConf.setOutputKeyClass(LongWritable.class);
+    jobConf.setOutputValueClass(Text.class);
+    jobConf.setOutputFormat(TextOutputFormat.class);
+    TextOutputFormat.setCompressOutput(jobConf, false);
+    Path output = new Path(_output);
+    FileSystem fs = output.getFileSystem(jobConf);
+    if (fs.exists(output)) fs.delete(output);
+    TextOutputFormat.setOutputPath(jobConf, output);
+
+    jobConf.set("mapred.compress.map.output", "true");
+    jobConf.set("mapred.output.compression.type", "BLOCK");
+    jobConf.set("mapred.map.output.compression.codec", "org.apache.hadoop.io.compress.GzipCodec");
+
+    jobConf.setNumReduceTasks(0);
+    return jobConf;
+  }
+
     public void execute () throws Exception {
         JobConf conf = createJobConf();
         RunningJob runningJob = new JobClient(conf).submitJob(conf);
         String id = runningJob.getJobID();
         System.out.println("Hadoop job id=" + id);
         runningJob.waitForCompletion();
-        
+
         if (!runningJob.isSuccessful()) 
             throw new Exception("Hadoop ETL job failed! Please check status on http://"
                                          + conf.get("mapred.job.tracker") + "/jobdetails.jsp?jobid=" + id);
     }
 
-	/**
-	 * for testing only
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
+  /**
+   * for testing only
+   *
+   * @param args
+   * @throws Exception
+   */
+  public static void main(String[] args) throws Exception {
 
-		if (args.length < 1)
-			throw new Exception("Usage: - config_file");
+    if (args.length < 1)
+      throw new Exception("Usage: - config_file");
 
-		Props props = new Props(args[0]);
-		SimpleKafkaETLJob job = new SimpleKafkaETLJob("SimpleKafkaETLJob",
-				props);
-		job.execute();
-	}
+    Props props = new Props(args[0]);
+    SimpleKafkaETLJob job = new SimpleKafkaETLJob("SimpleKafkaETLJob",
+        props);
+    job.execute();
+  }
 
 }
