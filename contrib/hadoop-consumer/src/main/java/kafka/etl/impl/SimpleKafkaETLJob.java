@@ -67,9 +67,10 @@ public class SimpleKafkaETLJob {
     FileSystem fs = output.getFileSystem(jobConf);
     if (fs.exists(output)) fs.delete(output);
     TextOutputFormat.setOutputPath(jobConf, output);
-
     jobConf.set("mapred.compress.map.output", "true");
+    jobConf.set("mapred.output.compress", "true");
     jobConf.set("mapred.output.compression.type", "BLOCK");
+    jobConf.set("mapred.output.compression.codec", "org.apache.hadoop.io.compress.GzipCodec");
     jobConf.set("mapred.map.output.compression.codec", "org.apache.hadoop.io.compress.GzipCodec");
 
     jobConf.setNumReduceTasks(0);
