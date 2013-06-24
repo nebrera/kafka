@@ -38,7 +38,7 @@ if [ -z "$bucket_name" ]; then
    bucket_name=`date +%Y/%m/%d/%Hh%M/`
 fi
 
-current_offset_file_exists=`hadoop fs -ls ${hdfs_dir}/offset`
+current_offset_file_exists=`hadoop fs -ls ${hdfs_dir}/${bucket_name}/*.dat`
 
 if [ -z "$current_offset_file_exists" ]; then
    echo "***************************************************************************************************************************"
@@ -54,7 +54,7 @@ if [ -z "$current_offset_file_exists" ]; then
          offset_file_name=`echo ${server} | sed -e 's/\:/-port/g'`
          eval "echo \"$(< template.properties)\"" > ${generated_property_file}
          ./run-class.sh kafka.etl.impl.DataGenerator ${generated_property_file}
-         hadoop fs -mv ${hdfs_dir}/offset/1.dat ${hdfs_dir}/offset/${offset_file_name}.dat
+         hadoop fs -mv ${hdfs_dir}/${bucket_name}/1.dat ${hdfs_dir}/${bucket_name}/${offset_file_name}.dat
       done < $list_of_brokers
    else
       printf "File \"$list_of_brokers\" was NOT found\n"
