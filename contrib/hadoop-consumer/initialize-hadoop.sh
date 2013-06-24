@@ -52,6 +52,7 @@ if [ -z "$current_offset_file_exists" ]; then
       do
          broker=${server}
          offset_file_name=`echo ${server} | sed -e 's/\:/-port/g'`
+         hdfs_input=${hdfs_dir}/${bucket_name}
          eval "echo \"$(< template.properties)\"" > ${generated_property_file}
          ./run-class.sh kafka.etl.impl.DataGenerator ${generated_property_file}
          hadoop fs -mv ${hdfs_dir}/${bucket_name}/1.dat ${hdfs_dir}/${bucket_name}/${offset_file_name}.dat
