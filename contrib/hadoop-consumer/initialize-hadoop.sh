@@ -60,6 +60,7 @@ if [ -z "$current_offset_file_exists" ]; then
       printf "File \"$list_of_brokers\" was NOT found\n"
       exit 0
    fi
+   hadoop fs -touchz  ${hdfs_dir}/${bucket_name}/_SUCCESS
 
 else
    echo "***************************************************************************************************************************"

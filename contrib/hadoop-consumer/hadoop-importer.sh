@@ -31,7 +31,7 @@ if [ -z "$generated_property_file" ]; then
    exit 1
 fi
 
-hdfs_input="`hadoop fs -ls /events/*/*/*/*/_SUCCESS | sort -k 8 | tail -1 | awk '{printf $8'} | sed -e 's/_SUCCESS/offsets_*/'`"
+hdfs_input="`hadoop fs -ls ${hdfs_dir}/*/*/*/*/_SUCCESS | sort -k 8 | tail -1 | awk '{printf $8'} | sed -e 's/_SUCCESS/offsets_*/'`"
 
 if [ -z "$hdfs_input" ]; then
    hdfs_input=${hdfs_dir}/offset
