@@ -6,29 +6,36 @@ export TZ="/usr/share/zoneinfo/UTC"
 #script uses relative paths, fixing it the old fashion way ;)
 cd `dirname $0`
 
+function usage() {
+   echo "$0 [-t topic] [-d hdfs_dir] [-g generated_property_file]"
+}
+
+while getopts "t:d:b:g:h" opt; do
+  case $opt in
+    t) topic=$OPTARG;;
+    d) hdfs_dir=$OPTARG;;
+    g) generated_property_file=$OPTARG;;
+    h) usage;;
+  esac
+done
+
 if [ -z "$topic" ]; then
-   echo "***************************************************************************************************************************"
-   echo "Must set $topic to kafka topic"
-   echo "***************************************************************************************************************************"
+   echo "ERROR: Must set $topic to kafka topic"
    exit 1
 fi
 
 if [ -z "$hdfs_dir" ]; then
-   echo "***************************************************************************************************************************"
-   echo "Must set $hdfs_dir to HDFS path"
-   echo "***************************************************************************************************************************"
+   echo "ERROR: Must set $hdfs_dir to HDFS path"
+   exit 1
+fi
+
+if [ -z "$generated_property_file" ]; then
+   echo "ERROR: Must set $generated_property_file to filename we can use for storing state"
    exit 1
 fi
 
 if [ -z "$bucket_name" ]; then
    bucket_name=`date +%Y/%m/%d/%Hh%M/`
-fi
-
-if [ -z "$generated_property_file" ]; then
-   echo "***************************************************************************************************************************"
-   echo "Must set $generated_property_file to filename we can use for storing state"
-   echo "***************************************************************************************************************************"
-   exit 1
 fi
 
 hdfs_input="`hadoop fs -ls ${hdfs_dir}/*/*/*/*/_SUCCESS | sort -k 8 | tail -1 | awk '{printf $8'} | sed -e 's/_SUCCESS/offsets_*/'`"
